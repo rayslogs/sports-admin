@@ -4,6 +4,8 @@
  */
 import React, { useState } from "react"
 import { Menu, Icon, Layout } from "antd"
+import { isArray } from "lodash"
+import routerConfig from "router/config"
 
 const SubMenu = Menu.SubMenu
 const { Sider } = Layout
@@ -17,25 +19,37 @@ const SiderComp = () => {
     console.log("click ", e)
   }
 
+  function renderMenu(routerConfig) {
+    return routerConfig.map(item => {
+      if (isArray(item.children)) {
+        return (
+          <SubMenu
+            key={item.match}
+            title={
+              <span>
+                <Icon type={item.icon} />
+                <span>{item.name}</span>
+              </span>
+            }
+          >
+            {renderMenu(item.children)}
+          </SubMenu>
+        )
+      }
+      console.log(item.path)
+      return (
+        <Menu.Item key={item.path}>
+          {item.icon && <Icon type={item.icon} />}
+          <span>{item.name}</span>
+        </Menu.Item>
+      )
+    })
+  }
+
   return (
     <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-      <Menu onClick={handleClick} mode="inline" defaultSelectedKeys={["1"]}>
-        <Menu.Item key="1">
-          <Icon type="appstore" />
-          <span>首页</span>
-        </Menu.Item>
-        <SubMenu
-          key="sub4"
-          title={
-            <span>
-              <Icon type="setting" />
-              <span>用户管理</span>
-            </span>
-          }
-        >
-          <Menu.Item key="9">账号管理</Menu.Item>
-          <Menu.Item key="11">角色管理</Menu.Item>
-        </SubMenu>
+      <Menu onClick={handleClick} mode="inline" defaultSelectedKeys={[routerConfig[0].path]}>
+        {renderMenu(routerConfig)}
       </Menu>
     </Sider>
   )
