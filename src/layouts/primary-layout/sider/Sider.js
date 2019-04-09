@@ -2,10 +2,10 @@
  * @author ht1131589588
  * @description 左侧菜单导航
  */
-import React, { useState } from "react"
-import { Menu, Icon, Layout } from "antd"
-import { isArray } from "lodash"
-import routerConfig from "router/config"
+import React, { useState } from 'react'
+import { Menu, Icon, Layout } from 'antd'
+import { isArray } from 'lodash'
+import routerConfig from 'router/config'
 
 const SubMenu = Menu.SubMenu
 const { Sider } = Layout
@@ -16,7 +16,7 @@ const SiderComp = () => {
     setCollapsed(collapsed)
   }
   const handleClick = e => {
-    console.log("click ", e)
+    console.log('click ', e)
   }
 
   function renderMenu(routerConfig) {
@@ -36,7 +36,6 @@ const SiderComp = () => {
           </SubMenu>
         )
       }
-      console.log(item.path)
       return (
         <Menu.Item key={item.path}>
           {item.icon && <Icon type={item.icon} />}
@@ -47,8 +46,17 @@ const SiderComp = () => {
   }
 
   return (
-    <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-      <Menu onClick={handleClick} mode="inline" defaultSelectedKeys={[routerConfig[0].path]}>
+    <Sider
+      collapsible
+      collapsed={collapsed}
+      onCollapse={onCollapse}
+      style={{ background: '#fff' }}
+    >
+      <Menu
+        onClick={handleClick}
+        mode="inline"
+        defaultSelectedKeys={[routerConfig[0].path]}
+      >
         {renderMenu(routerConfig)}
       </Menu>
     </Sider>
