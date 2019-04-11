@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'dva'
 import { Checkbox } from 'antd'
-import allData from '../../utils/all'
-import nowData from '../../utils/now'
 
 const setData = (arr, selects, parent) => {
   arr.forEach(item => {
@@ -18,13 +17,32 @@ const setData = (arr, selects, parent) => {
   })
 }
 
-const Home = props => {
-  const data = allData.content[0].moduleOrCategoryModels
-  const selectedData = nowData.content
-  setData(data, selectedData)
+const Home = ({ dispatch, allData, checkedData }) => {
+  const [init, setInit] = useState(false)
+  // 初始化
+  useEffect(() => {
+    dispatch({
+      type: 'test/queryAll'
+    })
+    dispatch({
+      type: 'test/queryCheckeds'
+    })
+  }, [dispatch])
+
+  useEffect(() => {
+    if (allData.length > 0 && checkedData.length > 0 && !init) {
+      setData(allData, checkedData)
+      dispatch({
+        type: 'test/setAllData',
+        payload: allData
+      })
+
+      setInit(true)
+    }
+  }, [dispatch, init, allData, checkedData])
   return (
     <div>
-      {data.map(item => (
+      {allData.map(item => (
         <Checkbox
           key={item.key}
           checked={item.checked}
@@ -38,11 +56,19 @@ const Home = props => {
 }
 
 Home.propTypes = {
-  model: PropTypes.object
+  dispatch: PropTypes.func,
+  allData: PropTypes.array,
+  checkedData: PropTypes.array
 }
 
 Home.defaultProps = {
-  model: {}
+  allData: [],
+  checkedData: []
 }
 
-export default Home
+export default connect(state => {
+  return {
+    allData: state.test.allData,
+    checkedData: state.test.checkedData
+  }
+})(Home)
