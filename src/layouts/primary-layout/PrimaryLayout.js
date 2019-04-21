@@ -1,11 +1,40 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import withRouter from 'umi/withRouter'
 import { Layout, Breadcrumb } from 'antd'
+import { isArray } from 'lodash'
+import routerConfig from 'router/config'
 import Sider from './sider'
 
 const { Header, Footer, Content } = Layout
 
-const PrimaryLayout = ({ children }) => {
+// 生成标签页
+function setBreadcrumbs(path) {
+  const breadcrumbs = []
+
+  function findRoute(routerConfig) {
+    routerConfig.forEach(item => {
+      if (item.path === path) {
+        breadcrumbs.push(item.name)
+      } else {
+        if (isArray(item.children)) {
+          if (item.children.some(a => a.path === path)) {
+            breadcrumbs.push(item.name)
+          }
+          findRoute(item.children)
+        }
+      }
+    })
+  }
+
+  findRoute(routerConfig)
+
+  return breadcrumbs
+}
+
+const PrimaryLayout = ({ children, location }) => {
+  const path = location.pathname
+  const breadcrumbs = setBreadcrumbs(path)
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider />
@@ -13,8 +42,9 @@ const PrimaryLayout = ({ children }) => {
         <Header style={{ background: '#fff', padding: 0 }} />
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+            {breadcrumbs.map((item, i) => (
+              <Breadcrumb.Item key={i}>{item}</Breadcrumb.Item>
+            ))}
           </Breadcrumb>
           <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
             {children}
@@ -29,7 +59,8 @@ const PrimaryLayout = ({ children }) => {
 }
 
 PrimaryLayout.propTypes = {
-  children: PropTypes.element.isRequired
+  children: PropTypes.element.isRequired,
+  location: PropTypes.object
 }
 
-export default PrimaryLayout
+export default withRouter(PrimaryLayout)

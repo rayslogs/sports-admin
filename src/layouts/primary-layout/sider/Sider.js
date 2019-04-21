@@ -2,7 +2,10 @@
  * @author ht1131589588
  * @description 左侧菜单导航
  */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import router from 'umi/router'
+import withRouter from 'umi/withRouter'
 import { Menu, Icon, Layout } from 'antd'
 import { isArray } from 'lodash'
 import routerConfig from 'router/config'
@@ -10,13 +13,39 @@ import routerConfig from 'router/config'
 const SubMenu = Menu.SubMenu
 const { Sider } = Layout
 
-const SiderComp = () => {
+function findOpenKeys(path) {
+  const openKeys = []
+  routerConfig.forEach(item => {
+    if (isArray(item.children)) {
+      item.children.forEach(a => {
+        if (a.path === path) {
+          openKeys.push(item.match)
+        }
+      })
+    }
+  })
+
+  return openKeys
+}
+
+const SiderComp = ({ location }) => {
   const [collapsed, setCollapsed] = useState(false)
+  const [selectedKeys, setSelectedKeys] = useState([location.pathname])
+  const [openKeys, setOpenKeys] = useState(findOpenKeys(selectedKeys[0]))
+
+  // 监听路由 设置选中key
+  useEffect(() => {
+    setSelectedKeys([location.pathname])
+  }, [location.pathname])
+
   const onCollapse = collapsed => {
     setCollapsed(collapsed)
   }
   const handleClick = e => {
-    console.log('click ', e)
+    router.push(e.key)
+  }
+  const handleOpenChange = openKeys => {
+    setOpenKeys(openKeys)
   }
 
   function renderMenu(routerConfig) {
@@ -53,7 +82,10 @@ const SiderComp = () => {
       style={{ background: '#fff' }}
     >
       <Menu
+        openKeys={openKeys}
+        selectedKeys={selectedKeys}
         onClick={handleClick}
+        onOpenChange={handleOpenChange}
         mode="inline"
         defaultSelectedKeys={[routerConfig[0].path]}
       >
@@ -63,4 +95,8 @@ const SiderComp = () => {
   )
 }
 
-export default SiderComp
+SiderComp.propTypes = {
+  location: PropTypes.object
+}
+
+export default withRouter(SiderComp)
