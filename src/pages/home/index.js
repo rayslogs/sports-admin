@@ -44,7 +44,6 @@ const Home = ({ dispatch, allData, checkedData }) => {
   useEffect(() => {
     if (allData.length > 0 && checkedData.length > 0 && !init) {
       setData(allData, checkedData)
-      console.log(allData)
       dispatch({
         type: 'test/setAllData',
         payload: allData
@@ -72,7 +71,7 @@ const Home = ({ dispatch, allData, checkedData }) => {
         nodes[i] = c
       } else {
         if (item.subCategorys && item.subCategorys.length) {
-          findFunc(item.subCategorys, c)
+          setFunc(item.subCategorys, c)
         }
       }
     })
@@ -131,7 +130,7 @@ const Home = ({ dispatch, allData, checkedData }) => {
     })
   }
 
-  const handleChecked = (item, checked, preTreeData) => {
+  const handleChecked = (item, checked) => {
     const newItem = JSON.parse(JSON.stringify(item))
     newItem.checked = checked
     newItem.indeterminate = false

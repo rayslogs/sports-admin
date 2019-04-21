@@ -1,8 +1,6 @@
 import allData from '../../utils/all'
 import nowData from '../../utils/now'
 
-console.log(nowData)
-
 export default {
   namespace: 'test',
   state: {
