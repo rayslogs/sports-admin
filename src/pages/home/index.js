@@ -92,16 +92,20 @@ const Home = ({ dispatch, allData, checkedData }) => {
         }
       })
       const childChecks = parent.subCategorys.filter(a => a.checked === true)
+      const indeterminate = parent.subCategorys.some(
+        a => a.indeterminate === true
+      )
       if (childChecks.length === parent.subCategorys.length) {
         parent.checked = true
         parent.indeterminate = false
       } else if (!childChecks.length) {
         parent.checked = false
-        parent.indeterminate = false
+        parent.indeterminate = indeterminate
       } else {
         parent.checked = false
         parent.indeterminate = true
       }
+      // console.log(parent.desc, parent)
       setFunc(allData, parent)
       setParent(parent)
     }
