@@ -1,5 +1,11 @@
 {
   "singleQuote": true,
-  "eslintIntegration": true,
-  "semi": false
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "overrides": [{
+    "files": ".prettierrc",
+    "options": {
+      "parser": "json"
+    }
+  }]
 }
